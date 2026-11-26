@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multiplayer Lobby & Matchmaking Kit for Unity</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1d2330;--mute:#5d6678;--line:#dde1e8;--accent:#2f6fed;--accent-soft:#e6eefd;--code:#eef1f6;--warn:#fff4dc;--warn-ink:#6a4a00;
+--sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181f;--panel:#1d212b;--ink:#e8ebf1;--mute:#9aa3b5;--line:#2c3240;--accent:#6e9bff;--accent-soft:#232d47;--code:#262b37;--warn:#3a2f12;--warn-ink:#f0d48a}}
+:root[data-theme="dark"]{--bg:#15181f;--panel:#1d212b;--ink:#e8ebf1;--mute:#9aa3b5;--line:#2c3240;--accent:#6e9bff;--accent-soft:#232d47;--code:#262b37;--warn:#3a2f12;--warn-ink:#f0d48a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:40px;max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+nav{position:sticky;top:24px;align-self:start;font-size:14px}
+nav strong{display:block;margin-bottom:10px;font-size:15px}
+nav a{display:block;padding:5px 10px;margin-left:-10px;border-radius:6px;color:var(--mute);text-decoration:none}
+nav a:hover,nav a:focus-visible{background:var(--accent-soft);color:var(--accent);outline:none}
+main{min-width:0}
+h1{font-size:34px;line-height:1.15;margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:23px;margin:48px 0 6px;letter-spacing:-.01em}
+h3{font-size:17px;margin:28px 0 6px}
+h4{font-size:15.5px;margin:18px 0 4px}
+p{margin:8px 0;max-width:72ch}
+.lead{color:var(--mute);font-size:18px;max-width:62ch}
+code{font:500 .86em var(--mono);background:var(--code);padding:2px 6px;border-radius:5px}
+pre{background:var(--code);padding:16px;border-radius:10px;overflow-x:auto;margin:12px 0;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-weight:400;font-size:13.5px;line-height:1.6}
+.tablewrap{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;background:var(--code)}
+tr:last-child td{border-bottom:0}
+td:first-child{white-space:nowrap}
+.note{background:var(--warn);color:var(--warn-ink);border-radius:10px;padding:12px 16px;margin:14px 0;max-width:72ch}
+.tag{display:inline-block;font-size:12.5px;padding:1px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+button{font:500 14px var(--sans);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:820px){.layout{grid-template-columns:1fr;gap:12px}nav{position:static;display:flex;flex-wrap:wrap;gap:4px 14px}nav strong{width:100%;margin-bottom:2px}nav a{margin:0;padding:4px 0}h1{font-size:28px}}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:18px 0}
+.feat div{border-left:3px solid var(--accent);padding:2px 0 2px 16px}
+.feat h3{margin:0 0 4px}
+.feat p{margin:0;color:var(--mute);font-size:15px}
+ul.plain{padding-left:20px;max-width:72ch}
+ul.plain li{margin:5px 0}
+@media (max-width:820px){.feat{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav aria-label="Sections">
+<strong>Lobby Kit</strong>
+<a href="#features">Features</a>
+<a href="#requirements">Requirements</a>
+<a href="#overview">Setup and settings</a>
+<a href="#connection">Connection</a>
+<a href="#lobby">Lobby settings</a>
+<a href="#instant">Instant matchmaking</a>
+<a href="#filters">Lobby filters</a>
+<a href="#info">Info UI</a>
+<a href="#code">Reading values in code</a>
+<a href="#notes">Notes</a>
+</nav>
+<main>
+<div class="top">
+<div>
+<h1>Multiplayer Lobby &amp; Matchmaking Kit</h1>
+<p class="lead">Add sign-in, cloud save, player profiles, and lobby matchmaking to your Netcode for GameObjects game. Configure everything from one asset.</p>
+</div>
+<button id="theme" type="button">Toggle theme</button>
+</div>
+
+<h2 id="features">What you get</h2>
+<div class="feat">
+<div><h3>Sign in</h3><p>Players sign in with a Unity Player Account or start right away as a guest. Built on Unity Authentication.</p></div>
+<div><h3>Cloud save</h3><p>Player data is stored with Unity Cloud Save instead of only on the device.</p></div>
+<div><h3>Player profile</h3><p>Players can set and change their display name. Name change is the only profile option.</p></div>
+</div>
+<h3>Lobbies and matchmaking</h3>
+<ul class="plain">
+<li>Host as peer to peer, or use a dedicated server.</li>
+<li>Public lobby list, plus join by code for public or private lobbies.</li>
+<li>Instant matchmaking with a search timeout and a choice of fallback.</li>
+<li>Lobby filters for game mode, map, rank points, and region, including closest region.</li>
+<li>Match info UI and an optional start before the lobby is full.</li>
+<li>Every option lives in one ScriptableObject, with change events your UI can listen to.</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul class="plain">
+<li>Netcode for GameObjects</li>
+<li>Unity Authentication</li>
+<li>Unity Cloud Save</li>
+<li>A Unity Gaming Services project linked to your Unity project</li>
+</ul>
+
+<h2 id="overview">Setup and settings</h2>
+<p>Edit the settings in the Inspector on the <code>SettingManager</code> asset. The asset must sit in a <code>Resources</code> folder and be named <code>SettingManager</code>, because the static <code>Instance</code> loads it with <code>Resources.Load</code>. If it’s missing, an error is logged.</p>
+<p>Every setting is private and read through a public property. Most settings also raise a change event when you edit them, so UI and networking code can react without polling.</p>
+
+<h2 id="connection">Multiplayer connection</h2>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>Default</th><th>What it does</th></tr>
+<tr><td><code>listenServer</code></td><td>Peer To Peer</td><td>Chooses the connection mode. <b>Peer To Peer</b>: one player hosts and also plays. <b>Dedicated Server</b>: a standalone server hosts the match.</td></tr>
+</table></div>
+<h3>Dedicated server: requesting a match</h3>
+<p>With <b>Dedicated Server</b>, the match runs on a separate game server instead of a player’s device. I recommend using a Cloud Code script to send the match request:</p>
+<ol class="plain">
+<li>A Cloud Code script sends the match request.</li>
+<li>The game server listens for the request and starts a server instance, then return the server ip and port.</li>
+<li>Clients read those two values and connect.</li>
+</ol>
+<div class="note"><b>Data visibility:</b> set <code>KEY_SERVER_IP</code> and <code>KEY_SERVER_PORT</code> to <code>Member</code> or <code>Public</code> so clients can read them. Data marked <code>Private</code> is visible only to the lobby host.</div>
+
+<h2 id="lobby">Lobby settings</h2>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>Default</th><th>What it does</th></tr>
+<tr><td><code>maxPlayerOnLobbyNMatch</code></td><td>10</td><td>Maximum players allowed in a lobby and in the match. Minimum value is 2.</td></tr>
+<tr><td><code>showActiveLobbyListUI</code></td><td>On</td><td>Shows the list of active public lobbies.</td></tr>
+<tr><td><code>showJoinLobbyByCodeUI</code></td><td>On</td><td>Shows an input field where players join a public or private lobby by typing its code.</td></tr>
+<tr><td><code>canStartMatchWithNoMaxPlayerOnLobby</code></td><td>Off</td><td>When on, the host can start the match before the lobby is full.</td></tr>
+</table></div>
+
+<h3 id="lobbytype">Game mode lobby types</h3>
+<p>Each <code>gameModeList</code> entry has a <code>lobbyType</code>. It decides how the player list is laid out inside the lobby.</p>
+<h4>allIsEnemy</h4>
+<p>Free for all. Every player joins the same group, so the lobby shows a single <b>Join</b> column with one list of players. There are no teams, and everyone is an opponent of everyone else.</p>
+<h4>twoTeams</h4>
+<p>Two teams face each other. The player list UI is split into two columns, one for each team. Players join the column of the team they want to play on.</p>
+<div class="tablewrap"><table>
+<tr><th>Lobby type</th><th>Player list UI</th><th>Players are</th></tr>
+<tr><td><span class="tag">allIsEnemy</span></td><td>1 column (Join)</td><td>All opponents, one shared list</td></tr>
+<tr><td><span class="tag">twoTeams</span></td><td>2 columns, one per team</td><td>Split into Team 1 and Team 2</td></tr>
+</table></div>
+
+<h2 id="instant">Instant matchmaking (no lobby UI)</h2>
+<p>Skips the lobby browser and matches the player as soon as they press play. The lobby UI toggles above aren’t used in this mode.</p>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>Default</th><th>What it does</th></tr>
+<tr><td><code>instantMatchmaking</code></td><td>Off</td><td>Turns instant matchmaking on.</td></tr>
+<tr><td><code>instantMatchSearchTimeout</code></td><td>10 sec</td><td>How long to search for a matching lobby before the timeout behavior runs.</td></tr>
+<tr><td><code>createFilteredLobbyOnInstantMatchMakingOnTimeout</code></td><td>Off</td><td><b>On:</b> create a new lobby using the selected filters. <b>Off:</b> join any open lobby, or create one if none exist.</td></tr>
+</table></div>
+
+<h2 id="filters">Lobby filters</h2>
+<p>The <code>lobbyFilterList</code> holds one entry per filter. Each entry has a <code>lobbyFilter</code> type, and the Inspector only shows the fields for that type.</p>
+<div class="tablewrap"><table>
+<tr><th>Filter type</th><th>Fields shown</th></tr>
+<tr><td><span class="tag">gameMode</span></td><td><code>showGameModeFilterUI</code>, <code>gameModeList</code></td></tr>
+<tr><td><span class="tag">map</span></td><td><code>showMapFilterUI</code>, <code>mapList</code></td></tr>
+<tr><td><span class="tag">rankPoin</span></td><td><code>showRankPoinFilterUI</code>, <code>addRankPoinFilterDirectlyToTheActiveLobbyFilterList</code>, plus <code>rankLabelUIList</code> (when the UI is shown) or <code>minRankPoin</code>/<code>maxRankPoin</code> (when added directly)</td></tr>
+<tr><td><span class="tag">region</span></td><td><code>lobbyUseBestRegion</code>, <code>showRegionFilterUI</code>, <code>regionList</code></td></tr>
+</table></div>
+
+<h3>Filter entries</h3>
+<p>Every entry in a list has two flags that add it to the automatic search without the player choosing it:</p>
+<div class="tablewrap"><table>
+<tr><th>Flag</th><th>Effect</th></tr>
+<tr><td><code>addDirectlyToTheCreateLobbyActiveFilterList</code></td><td>The entry is applied automatically when creating a lobby.</td></tr>
+<tr><td><code>addDirectlyToTheFindLobbyActiveFilterList</code></td><td>The entry is applied automatically when searching for a lobby.</td></tr>
+</table></div>
+<div class="tablewrap"><table>
+<tr><th>List</th><th>Entry fields (besides the two flags)</th></tr>
+<tr><td><code>gameModeList</code></td><td><code>filterCodeName</code> (string), <code>lobbyType</code>: <b>allIsEnemy</b> or <b>twoTeams</b></td></tr>
+<tr><td><code>mapList</code></td><td><code>filterCodeName</code> (string)</td></tr>
+<tr><td><code>regionList</code></td><td><code>region</code> (bestRegion, NA, EU, APAC, LATAM regions, MiddleEast, SouthAfrica)</td></tr>
+<tr><td><code>rankLabelUIList</code></td><td><code>rankLabelName</code>, <code>minRankRangePoin</code>, <code>maxRankRangePoin</code> (no create/find flags are needed for display only, but they exist on each entry)</td></tr>
+</table></div>
+
+<h2 id="info">Info UI</h2>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>Default</th><th>What it does</th></tr>
+<tr><td><code>showMatchInfoUI</code></td><td>On</td><td>Shows the match information UI.</td></tr>
+</table></div>
+
+<h2 id="code">Reading values in code</h2>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>Property</th><th>Change event</th></tr>
+<tr><td>listenServer</td><td><code>_listenServer</code></td><td><code>OnListenServerValChange</code></td></tr>
+<tr><td>maxPlayerOnLobbyNMatch</td><td><code>MaxPlayerOnLobbyNMatch</code></td><td><code>OnMaxPlayerOnLobbyNMatchLastValValChange</code></td></tr>
+<tr><td>showActiveLobbyListUI</td><td><code>ShowActiveLobbyListUI</code></td><td><code>OnShowActiveLobbyListUIValChange</code></td></tr>
+<tr><td>showJoinLobbyByCodeUI</td><td><code>ShowJoinLobbyByCodeUI</code></td><td><code>OnShowJoinLobbyByCodeUI</code></td></tr>
+<tr><td>canStartMatchWithNoMaxPlayerOnLobby</td><td><code>CanStartMatchWithNoMaxPlayerOnLobby</code></td><td><code>OnCanStartMatchWithNoMaxPlayerOnLobbyValChange</code></td></tr>
+<tr><td>instantMatchmaking</td><td><code>InstantMatchmaking</code></td><td><code>OnInstantMatchmakingValChange</code></td></tr>
+<tr><td>instantMatchSearchTimeout</td><td><code>InstantMatchSearchTimeout</code></td><td>none</td></tr>
+<tr><td>createFilteredLobby…OnTimeout</td><td><code>CreateFilteredLobbyOnInstantMatchMakingTimeout</code></td><td><code>OnCreateFilteredLobbyOnInstantMatchMakingOnTimeoutValChanged</code></td></tr>
+<tr><td>lobbyFilterList</td><td><code>lobbyFilterList</code> (public)</td><td>none</td></tr>
+<tr><td>showMatchInfoUI</td><td><code>ShowMatchInfoUI</code></td><td><code>OnShowMatchInfoUIValChanged</code></td></tr>
+</table></div>
+<pre><code>var settings = SettingManager.Instance;
+
+if (settings.InstantMatchmaking)
+    StartInstantSearch(settings.InstantMatchSearchTimeout);
+
+settings.OnShowMatchInfoUIValChanged += show =&gt; infoPanel.SetActive(show);</code></pre>
+
+<h2 id="notes">Notes</h2>
+<div class="note"><b>Best region:</b> when <code>lobbyUseBestRegion</code> is on, the lobby uses the region closest to the player. The region list below it is ignored and its UI is hidden.</div>
+<div class="note"><b>Rank points:</b> keep <code>minRankPoin</code> lower than <code>maxRankPoin</code>, and the same for each rank range in <code>rankLabelUIList</code>.</div>
+<p>The Inspector shows only the fields that apply to the selected filter type, so an empty-looking entry usually means its type is set to something else.</p>
+</main>
+</div>
+<script>
+(function(){
+var b=document.getElementById('theme'),r=document.documentElement;
+b.addEventListener('click',function(){
+var dark=r.getAttribute('data-theme')==='dark'||(r.getAttribute('data-theme')!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+r.setAttribute('data-theme',dark?'light':'dark');
+});
+})();
+</script>
+</body>
+</html>
