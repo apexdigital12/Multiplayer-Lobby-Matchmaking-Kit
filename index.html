@@ -108,7 +108,7 @@ ul.plain li{margin:5px 0}
 <tr><td><code>listenServer</code></td><td>Peer To Peer</td><td>Chooses the connection mode. <b>Peer To Peer</b>: one player hosts and also plays. <b>Dedicated Server</b>: a standalone server hosts the match.</td></tr>
 </table></div>
 <h3>Dedicated server: requesting a match</h3>
-<p>With <b>Dedicated Server</b>, the match runs on a separate game server instead of a player’s device. I recommend using a Cloud Code script to send the match request:</p>
+<p>With <b>Dedicated Server</b>, the match runs on a separate game server instead of a player’s device. We recommend using a Cloud Code script to send the match request:</p>
 <ol class="plain">
 <li>A Cloud Code script sends the match request.</li>
 <li>The game server listens for the request and starts a server instance, then return the server ip and port.</li>
@@ -154,6 +154,7 @@ ul.plain li{margin:5px 0}
 <tr><td><span class="tag">map</span></td><td><code>showMapFilterUI</code>, <code>mapList</code></td></tr>
 <tr><td><span class="tag">rankPoin</span></td><td><code>showRankPoinFilterUI</code>, <code>addRankPoinFilterDirectlyToTheActiveLobbyFilterList</code>, plus <code>rankLabelUIList</code> (when the UI is shown) or <code>minRankPoin</code>/<code>maxRankPoin</code> (when added directly)</td></tr>
 <tr><td><span class="tag">region</span></td><td><code>lobbyUseBestRegion</code>, <code>showRegionFilterUI</code>, <code>regionList</code></td></tr>
+<tr><td><span class="tag">customLobbyData</span></td><td><code>customLobbyDataList</code></td></tr>
 </table></div>
 
 <h3>Filter entries</h3>
@@ -168,8 +169,29 @@ ul.plain li{margin:5px 0}
 <tr><td><code>gameModeList</code></td><td><code>filterCodeName</code> (string), <code>lobbyType</code>: <b>allIsEnemy</b> or <b>twoTeams</b></td></tr>
 <tr><td><code>mapList</code></td><td><code>filterCodeName</code> (string)</td></tr>
 <tr><td><code>regionList</code></td><td><code>region</code> (bestRegion, NA, EU, APAC, LATAM regions, MiddleEast, SouthAfrica)</td></tr>
+<tr><td><code>customLobbyDataList</code></td><td><code>lobbyDataKey</code> (string), <code>lobbyDataValue</code> (string), <code>visibility</code></td></tr>
 <tr><td><code>rankLabelUIList</code></td><td><code>rankLabelName</code>, <code>minRankRangePoin</code>, <code>maxRankRangePoin</code> (no create/find flags are needed for display only, but they exist on each entry)</td></tr>
 </table></div>
+
+<h3 id="customdata">Custom lobby data filter</h3>
+<p>Use the <span class="tag">customLobbyData</span> filter type to add your own key and value to the lobby data. It lets you filter lobbies by anything the built-in filters don’t cover. Each entry in <code>customLobbyDataList</code> is a <code>CustomLobbyDataFilter</code>. <b>    Built-in UI is not implemented yet. </b></p>
+<div class="tablewrap"><table>
+<tr><th>Field</th><th>What it does</th></tr>
+<tr><td><code>lobbyDataKey</code></td><td>Key name in the custom lobby data dictionary.</td></tr>
+<tr><td><code>lobbyDataValue</code></td><td>Value stored under that key.</td></tr>
+<tr><td><code>visibility</code></td><td>Lobby data visibility: <code>Public</code>, <code>Member</code>, or <code>Private</code>.</td></tr>
+<tr><td><code>addDirectlyToTheCreateLobbyActiveFilterList</code></td><td>Applied automatically when creating a lobby.</td></tr>
+<tr><td><code>addDirectlyToTheFindLobbyActiveFilterList</code></td><td>Applied automatically when searching for a lobby.</td></tr>
+</table></div>
+<pre><code>public struct CustomLobbyDataFilter
+{
+    public string lobbyDataKey;
+    public string lobbyDataValue;
+    public DataObject.VisibilityOptions visibility;
+    public bool addDirectlyToTheCreateLobbyActiveFilterList;
+    public bool addDirectlyToTheFindLobbyActiveFilterList;
+}</code></pre>
+<div class="note"><b>Visibility:</b> filter on keys set to <code>Public</code>. Lobby searches only see public data, and <code>Member</code> data is visible only to players already in the lobby.</div>
 
 <h2 id="info">Info UI</h2>
 <div class="tablewrap"><table>
